@@ -1,0 +1,16 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+
+RWStructuredBuffer<float> Depths;
+RWStructuredBuffer<float3> CenterPositions;
+float4x4 VPMatrix;
+uniform float Time;
+
+[numthreads(64,1,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    Depths[id.x] = mul(VPMatrix, float4(CenterPositions[id.x], 1)).z;
+}

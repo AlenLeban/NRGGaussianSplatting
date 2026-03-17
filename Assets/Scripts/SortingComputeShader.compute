@@ -1,0 +1,31 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+
+RWStructuredBuffer<float> Array;
+RWStructuredBuffer<int> SortedIndices;
+int shiftSorting;
+
+[numthreads(64,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    int i = 2 * id.x;
+    if (shiftSorting == 1)
+    {
+        i += 1;
+    }
+    int j = i + 1;
+    if (Array[i] < Array[j])
+    {
+        float temp = Array[i];
+        Array[i] = Array[j];
+        Array[j] = temp;
+        
+        int tempIndex = SortedIndices[i];
+        SortedIndices[i] = SortedIndices[j];
+        SortedIndices[j] = tempIndex;
+    }
+    //Depths[id.x] = mul(VPMatrix, float4(CenterPositions[id.x], 1)).z;
+}
